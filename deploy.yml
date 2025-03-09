@@ -1,0 +1,26 @@
+---
+- name: Deploy Python Flask Application
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Clone the repository
+      git:
+        repo: 'https://github.com/yourusername/your-repository.git'
+        dest: /opt/flask-app
+
+    - name: Build the Docker image
+      command: docker-compose -f /opt/flask-app/docker-compose.yml build
+
+    - name: Start the Flask app
+      command: docker-compose -f /opt/flask-app/docker-compose.yml up -d
