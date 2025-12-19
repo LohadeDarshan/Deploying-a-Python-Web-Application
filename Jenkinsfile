@@ -24,7 +24,7 @@ pipeline {
                 sh '''
                     docker stop python-app-container || true
                     docker rm python-app-container || true
-                    docker run -d --name python-app-container -p 5000:5000 adeeti-jwellers
+                     docker run -d -p 5000:5000 --name python-app myserverd/python-app:latest
                 '''
             }
         }
