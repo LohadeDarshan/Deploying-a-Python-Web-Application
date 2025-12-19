@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('scm checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/LohadeDarshan/Deploying-a-Python-Web-Application.git'
+                git branch: 'main', url: 'https://github.com/LohadeDarshan/Deploying-a-Python-Web-Application.git'
             }
         }
         stage('Build Docker Image') {
