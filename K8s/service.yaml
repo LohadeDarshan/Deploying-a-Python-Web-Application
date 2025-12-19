@@ -3,10 +3,11 @@ kind: Service
 metadata:
   name: python-app-service
 spec:
+  type: NodePort          # <-- change ClusterIP to NodePort
   selector:
     app: python-app
   ports:
-    - protocol: TCP 
+    - protocol: TCP
       port: 5000
       targetPort: 5000
-  type: ClusterIP
+      nodePort: 30007    # optional fixed port, else Kubernetes assigns
