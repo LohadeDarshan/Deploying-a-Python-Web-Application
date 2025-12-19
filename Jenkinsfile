@@ -6,40 +6,29 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/LohadeDarshan/Deploying-a-Python-Web-Application.git'
             }
         }
-        stage('code validate') {
+        stage('Build Docker Image') {
             steps {
-                withMaven(globalMavenSettingsConfig: '', jdk: 'JAVA_HOME', maven: 'MAVEN_HOME', mavenSettingsConfig: '', traceability: true) {
-                    sh 'mvn validate'   // validate the code
+                sh 'docker build -t myserverd/python-app .'
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                withDockerRegistry(url: 'https://index.docker.io/v1/', credentialsId: 'myserverd') {
+                    sh 'docker tag python-app myserverd/python-app:latest'
+                    sh 'docker push myserverd/python-app:latest'
                 }
             }
         }
-        stage('code compile') {
+        stage('Run Container') {
             steps {
-                withMaven(globalMavenSettingsConfig: '', jdk: 'JAVA_HOME', maven: 'MAVEN_HOME', mavenSettingsConfig: '', traceability: true) {
-                    sh 'mvn compile'   // compile
-                }
+                sh '''
+                    docker stop python-app-container || true
+                    docker rm python-app-container || true
+                    docker run -d --name python-app-container -p 5000:5000 adeeti-jwellers
+                '''
             }
         }
-        stage('code test') {
-            steps {
-                withMaven(globalMavenSettingsConfig: '', jdk: 'JAVA_HOME', maven: 'MAVEN_HOME', mavenSettingsConfig: '', traceability: true) {
-                    sh 'mvn test'   // test
-                }
-            }
-        }
-        stage('build the code') {
-      steps {
-        withMaven(globalMavenSettingsConfig: '', jdk: 'JAVA_HOME', maven: 'MAVEN_HOME', mavenSettingsConfig: '', traceability: true) {
-          sh 'mvn clean package'
-        }
-      }
     }
-        stage('deploy to tomcat server'){
-            steps {
-                sshagent(['DevCICD']){
-                    sh 'scp -o StrictHostKeyChecking=no webapp/target/webapp.war root@10.162.98.210:/var/lib/tomcat10/webapps'
-                }
-            }
-        }
+}
     }
 }
