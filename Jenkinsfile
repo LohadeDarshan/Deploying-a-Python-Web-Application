@@ -14,7 +14,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 withDockerRegistry(url: 'https://index.docker.io/v1/', credentialsId: 'dockerHubCred') {
-                    sh 'docker tag python-app myserverd/python-app:latest'
+                    sh 'docker tag myserverd/python-app:latest myserverd/python-app:latest'
                     sh 'docker push myserverd/python-app:latest'
                 }
             }
