@@ -19,12 +19,11 @@ pipeline {
                 }
             }
         }
-        stage('Run Container') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                    docker stop python-app-container || true
-                    docker rm python-app-container || true
-                     docker run -d -p 5000:5000 --name python-app myserverd/python-app:latest
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
                 '''
             }
         }
